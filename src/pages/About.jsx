@@ -21,8 +21,8 @@ export default function About() {
           alt="About Hero"
         />
         <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="text-3xl md:text-5xl font-bold tracking-widest text-white">
+        <div className="absolute inset-0 flex items-center ">
+          <h1 className="text-2xl text-start md:text-5xl ml-5 font-bold tracking-widest text-white">
             TENTANG KAMI
           </h1>
         </div>
@@ -35,7 +35,7 @@ export default function About() {
           {/* TEXT */}
           <div className="flex-1 bg-darkbg-card p-5 sm:p-6 rounded-2xl">
             <h2 className="font-serif text-xl sm:text-2xl text-white mb-4">
-              Selamat datang di SEMANGGI FORUM
+              Selamat datang di <span className="text-sg">SEMANGGI FORUM</span>
             </h2>
             <p className="text-gray-300 text-sm leading-relaxed">
               Semanggi Forum adalah forum kolaboratif yang dibangun oleh mahasiswa dengan semangat untuk berkembang bersama melalui project nyata, diskusi bermakna, dan kontribusi sosial. Banyak orang punya potensi. Tapi sedikit yang punya sistem. Di sinilah kami membangun itu — perlahan, metodis, dengan rasa hormat pada proses.

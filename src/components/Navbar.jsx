@@ -1,24 +1,55 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+ 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
 
   const navLinks = [
-    { to: '/', label: 'Home' },
-    { to: '/about', label: 'About' },
-    { to: '/projects', label: 'Project' },
-    { to: '/system', label: 'System' },
+    { to: '/', label: 'Home', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+    )},
+    { to: '/about', label: 'About', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    )},
+    { to: '/projects', label: 'Project', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+    )},
+    { to: '/system', label: 'System', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+    )},
   ];
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <>
+      {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-darkbg/90 backdrop-blur-md border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3">
-              <img src="/assets/logoresmi.png" alt="Semanggi Logo" className="w-9 h-9 object-contain" />
+              <img
+                src="/assets/logoresmi.png"
+                alt="Semanggi Logo"
+                className="w-9 h-9 object-contain"
+              />
               <span className="text-sg font-bold text-sm tracking-widest uppercase hidden sm:block">
                 Semanggi Forum
               </span>
@@ -30,7 +61,11 @@ export default function Navbar() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="text-xs font-semibold uppercase tracking-widest text-gray-400 hover:text-sg transition-colors duration-200"
+                  className={`text-xs font-semibold uppercase tracking-widest transition-colors duration-200 ${
+                    isActive(link.to)
+                      ? 'text-sg'
+                      : 'text-gray-400 hover:text-sg'
+                  }`}
                 >
                   {link.label}
                 </Link>
@@ -45,46 +80,106 @@ export default function Navbar() {
 
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden text-sg focus:outline-none p-2"
+              className="md:hidden text-sg focus:outline-none p-2 rounded-lg hover:bg-white/5 transition-colors"
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle menu"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* ===== MOBILE POPUP MENU ===== */}
+
+      {/* Backdrop / Overlay */}
       <div
-        className={`${
-          isOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
-        } md:hidden overflow-hidden transition-all duration-300 ease-in-out bg-darkbg-card border-b border-white/5`}
+        className={`md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsOpen(false)}
+      />
+
+      {/* Bottom Sheet */}
+      <div
+        className={`md:hidden fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300 ease-out ${
+          isOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
       >
-        <div className="px-4 py-4 space-y-3">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="block text-xs font-semibold uppercase tracking-widest text-gray-400 hover:text-sg transition-colors duration-200"
+        {/* Sheet Container */}
+        <div className="bg-darkbg-card rounded-t-3xl border-t border-white/10 shadow-2xl overflow-hidden">
+
+          {/* Drag Handle */}
+          <div className="flex justify-center pt-3 pb-2">
+            <div className="w-10 h-1 rounded-full bg-white/20" />
+          </div>
+
+          {/* Header Sheet */}
+          <div className="flex items-center justify-between px-6 py-3 border-b border-white/5">
+            <div className="flex items-center space-x-2">
+              <img
+                src="/assets/logoresmi.png"
+                alt="Semanggi Logo"
+                className="w-7 h-7 object-contain"
+              />
+              <span className="text-sg font-bold text-sm tracking-widest uppercase">
+                Semanggi Forum
+              </span>
+            </div>
+            <button
               onClick={() => setIsOpen(false)}
+              className="text-gray-400 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors"
+              aria-label="Close menu"
             >
-              {link.label}
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Nav Links */}
+          <div className="px-4 py-4 space-y-1">
+            {navLinks.map((link, index) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setIsOpen(false)}
+                style={{ animationDelay: isOpen ? `${index * 60}ms` : '0ms' }}
+                className={`flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-200 ${
+                  isActive(link.to)
+                    ? 'bg-sg/10 text-sg'
+                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <span className="text-xl">{link.icon}</span>
+                <span className="text-sm font-semibold uppercase tracking-widest">
+                  {link.label}
+                </span>
+                {isActive(link.to) && (
+                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-sg" />
+                )}
+              </Link>
+            ))}
+          </div>
+
+          {/* CTA Button */}
+          <div className="px-4 pb-6 pt-2">
+            <Link
+              to="/form-pendaftaran"
+              onClick={() => setIsOpen(false)}
+              className="btn-secondary block text-center text-sm uppercase tracking-widest py-3.5 rounded-2xl w-full font-bold"
+            >
+              Gabung Sekarang
             </Link>
-          ))}
-          <Link
-            to="/form-pendaftaran"
-            className="block text-xs font-semibold uppercase tracking-widest text-sg hover:text-sg-light transition-colors duration-200"
-            onClick={() => setIsOpen(false)}
-          >
-            Gabung
-          </Link>
+          </div>
+
         </div>
       </div>
     </>

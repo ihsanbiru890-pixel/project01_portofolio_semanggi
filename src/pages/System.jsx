@@ -16,7 +16,7 @@ export default function System() {
           <div className="absolute inset-0 bg-black/40" />
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto">
+        <div className="relative z-10 max-w-5xl ml-10 mx-auto">
           <h1 className="text-3xl sm:text-4xl font-bold mt-10 tracking-widest">SYSTEM</h1>
           <h2 className="text-lg sm:text-xl text-gray-400">Cara kami belajar</h2>
         </div>
@@ -40,7 +40,7 @@ export default function System() {
 
             <div className="flex-1 bg-darkbg-card rounded-2xl border border-white/5 p-6 sm:p-8 shadow-lg hover:border-sg/40 transition">
               <h2 className="text-sg font-bold text-lg sm:text-xl mb-2">MANDOR METHOD</h2>
-              <p className="text-gray-400 text-sm">Lorem ipsum dolor sit amet</p>
+              <p className="text-gray-400 text-sm">Sistem kerja berbasis proyek yang terstruktur untuk memastikan setiap tugas memiliki arah, peran yang jelas, dan progres yang terpantau.</p>
             </div>
           </div>
 
@@ -56,7 +56,7 @@ export default function System() {
 
             <div className="flex-1 bg-darkbg-card rounded-2xl border border-white/5 p-6 sm:p-8 shadow-lg hover:border-sg/40 transition">
               <h2 className="text-sg font-bold text-lg sm:text-xl mb-2">PROBLEM THREAD</h2>
-              <p className="text-gray-400 text-sm">Lorem ipsum dolor sit amet</p>
+              <p className="text-gray-400 text-sm">Ruang diskusi terfokus untuk mengurai masalah secara mendalam, menemukan akar persoalan, dan merumuskan solusi yang tepat.</p>
             </div>
           </div>
 
@@ -72,7 +72,7 @@ export default function System() {
 
             <div className="flex-1 bg-darkbg-card rounded-2xl border border-white/5 p-6 sm:p-8 shadow-lg hover:border-sg/40 transition">
               <h2 className="text-sg font-bold text-lg sm:text-xl mb-2">ITERASI & DELIVER</h2>
-              <p className="text-gray-400 text-sm">Lorem ipsum dolor sit amet</p>
+              <p className="text-gray-400 text-sm">Proses pengembangan yang berkelanjutan dengan fokus pada peningkatan terus-menerus dan pengiriman hasil yang berkualitas.</p>
             </div>
           </div>
         </div>
