@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-darkbg text-white;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .bg-gradient-glow1 {
+    background: radial-gradient(circle at center, #1a3a1a 0%, #121417 70%);
+  }
+
+  .bg-glow2 {
+    background: radial-gradient(circle at right, rgba(109, 190, 69, 0.15) 0%, rgba(18, 20, 23, 0) 70%);
+  }
+
+  .bg-gradient-glow-teal {
+    background: radial-gradient(circle at left, rgba(45, 212, 191, 0.1) 0%, rgba(18, 20, 23, 0) 70%);
+  }
+
+  .card {
+    @apply bg-darkbg-card rounded-2xl border border-white/5 p-6 sm:p-8 shadow-lg;
+  }
+
+  .btn-primary {
+    @apply bg-sg hover:bg-sg-dark text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest shadow-lg shadow-sg/20 transition-all duration-300;
+  }
+
+  .btn-secondary {
+    @apply bg-sg/20 hover:bg-sg/30 text-sg px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300;
+  }
+
+  .btn-gold {
+    @apply bg-gold hover:bg-gold-dark text-darkbg px-6 py-2 rounded-full text-sm font-bold transition-all duration-300;
+  }
+
+  .section-title {
+    @apply text-sm font-bold tracking-[0.3em] uppercase text-white;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 bg-darkbg-surface border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sg focus:border-transparent transition-all duration-200;
+  }
+
+  .text-link {
+    @apply text-sg hover:text-sg-light transition-colors duration-200;
+  }
+}
