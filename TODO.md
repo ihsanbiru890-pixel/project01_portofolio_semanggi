@@ -35,7 +35,38 @@
 - [x] Update success UI to show actual confirmation from server
 
 ### 7. Commit & Push New Changes
-- [ ] `git add .`
-- [ ] `git commit -m "fix: navbar icons + real form submission via Google Apps Script"`
-- [ ] `git push origin main`
+- [x] `git add .`
+- [x] `git commit -m "fix: navbar icons + real form submission via Google Apps Script"`
+- [ ] `git push origin main` — **GAGAL (403 Forbidden)**
+
+---
+
+## Push Error Resolution
+
+**Error:** `Permission to ihsanbiru890-pixel/project01_portofolio_semanggi.git denied to khadavi732.`
+
+**Cause:** Akun GitHub yang sedang digunakan (`khadavi732`) tidak memiliki akses write ke repository milik `ihsanbiru890-pixel`.
+
+**Solusi (pilih salah satu):**
+
+1. **Mintak Akses dari Owner Repo**  
+   Hubungi `ihsanbiru890-pixel` untuk menambahkan akun `khadavi732` sebagai **Collaborator** di repository tersebut:  
+   `Settings → Manage access → Invite a collaborator → khadavi732`
+
+2. **Push ke Repository Sendiri**  
+   Fork atau buat repo baru di akun `khadavi732`, lalu update remote:  
+   ```bash
+   git remote set-url origin https://github.com/khadavi732/nama-repo-baru.git
+   git push -u origin main
+   ```
+
+3. **Gunakan Token / SSH dengan Akun Owner**  
+   Jika kamu punya akses login ke akun `ihsanbiru890-pixel`, configure ulang git credential:  
+   ```bash
+   git config --global user.name "ihsanbiru890-pixel"
+   git config --global user.email "email-owner@gmail.com"
+   ```
+   Lalu generate Personal Access Token (PAT) di GitHub → Settings → Developer settings → Tokens, dan gunakan token tersebut saat `git push`.
+
+**Status lokal saat ini:** Semua perubahan sudah di-commit di branch `main` (commit `bc4686d`) dan siap push begitu akses tersedia.
 
