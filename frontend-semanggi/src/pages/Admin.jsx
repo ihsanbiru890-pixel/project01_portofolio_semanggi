@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineUsers, HiOutlineChatBubbleLeftRight, HiOutlineFlag, HiOutlineBriefcase } from 'react-icons/hi2';
 import api from '../lib/api';
+import ConfirmModal from '../components/ConfirmModal';
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [selectedApp, setSelectedApp] = useState(null);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
 
   const fetchAdminData = async () => {
     try {
@@ -26,13 +28,18 @@ export default function Admin() {
         api.get('/applications')
       ]);
 
-      setUsers(usersRes.data);
-      setApplications(appsRes.data.data);
+      setUsers(usersRes.data || []);
+      const apps = appsRes.data.data || appsRes.data || [];
+      setApplications(apps);
+      
+      const discussions = discussionsRes.data || [];
+      const portfolios = portfoliosRes.data.data || portfoliosRes.data || [];
+
       setStats([
-        { label: 'Total User', val: usersRes.data.length.toString(), icon: <HiOutlineUsers className="w-5 h-5" />, color: 'sg' },
-        { label: 'Diskusi Aktif', val: discussionsRes.data.length.toString(), icon: <HiOutlineChatBubbleLeftRight className="w-5 h-5" />, color: 'teal' },
-        { label: 'Pendaftar', val: appsRes.data.data.length.toString(), icon: <HiOutlineFlag className="w-5 h-5" />, color: 'gold' },
-        { label: 'Proyek Aktif', val: portfoliosRes.data.length.toString(), icon: <HiOutlineBriefcase className="w-5 h-5" />, color: 'sg' },
+        { label: 'Total User', val: (usersRes.data?.length || 0).toString(), icon: <HiOutlineUsers className="w-5 h-5" />, color: 'sg' },
+        { label: 'Diskusi Aktif', val: (discussions.length || 0).toString(), icon: <HiOutlineChatBubbleLeftRight className="w-5 h-5" />, color: 'teal' },
+        { label: 'Pendaftar', val: (apps.length || 0).toString(), icon: <HiOutlineFlag className="w-5 h-5" />, color: 'gold' },
+        { label: 'Proyek Aktif', val: (portfolios.length || 0).toString(), icon: <HiOutlineBriefcase className="w-5 h-5" />, color: 'sg' },
       ]);
     } catch (err) {
       console.error('Failed to fetch admin data:', err);
@@ -51,23 +58,35 @@ export default function Admin() {
   }, []);
 
   const handleDeleteUser = async (id) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) return;
-    try {
-      await api.delete(`/users/${id}`);
-      fetchAdminData();
-    } catch (err) {
-      alert('Gagal menghapus pengguna');
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: 'Hapus Pengguna',
+      message: 'Apakah Anda yakin ingin menghapus pengguna ini? Semua data terkait akan ikut terhapus.',
+      onConfirm: async () => {
+        try {
+          await api.delete(`/users/${id}`);
+          fetchAdminData();
+        } catch (err) {
+          alert('Gagal menghapus pengguna');
+        }
+      }
+    });
   };
 
   const handleDeleteApplication = async (id) => {
-    if (!window.confirm('Hapus data pendaftaran ini?')) return;
-    try {
-      await api.delete(`/applications/${id}`);
-      fetchAdminData();
-    } catch (err) {
-      alert('Gagal menghapus pendaftaran');
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: 'Hapus Pendaftaran',
+      message: 'Hapus data pendaftaran ini? Tindakan ini tidak dapat dibatalkan.',
+      onConfirm: async () => {
+        try {
+          await api.delete(`/applications/${id}`);
+          fetchAdminData();
+        } catch (err) {
+          alert('Gagal menghapus pendaftaran');
+        }
+      }
+    });
   };
 
   const handleReviewApplication = async (id, isReviewed) => {
@@ -303,6 +322,14 @@ export default function Admin() {
           </div>
         </div>
       )}
+      {/* Confirm Modal for Deletions */}
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onConfirm={confirmModal.onConfirm}
+        onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+      />
     </div>
   );
 }

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import api from '../lib/api';
+import ConfirmModal from '../components/ConfirmModal';
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -25,9 +27,12 @@ export default function Projects() {
   }, []);
 
   const handleDeleteProject = async (id) => {
-    if (!window.confirm('Hapus proyek ini?')) return;
+    setConfirmModal({ isOpen: true, id });
+  };
+
+  const confirmDelete = async () => {
     try {
-      await api.delete(`/portfolios/${id}`);
+      await api.delete(`/portfolios/${confirmModal.id}`);
       fetchProjects();
     } catch (err) {
       alert('Gagal menghapus proyek');
@@ -115,6 +120,14 @@ export default function Projects() {
           <p className="text-gray-500 text-sm">Stay tuned, kami selalu punya sesuatu yang sedang dibangun.</p>
         </div>
       </section>
+
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        title="Hapus Proyek"
+        message="Apakah Anda yakin ingin menghapus proyek ini?"
+        onConfirm={confirmDelete}
+        onClose={() => setConfirmModal({ isOpen: false, id: null })}
+      />
     </>
   );
 }

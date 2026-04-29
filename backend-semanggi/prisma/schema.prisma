@@ -22,10 +22,11 @@ model User {
   username     String       @map("nama_pengguna")
   email        String       @unique
   password     String       @map("kata_sandi")
-  profilePicUrl String?     @map("url_foto_profil")
-  bio          String?      @map("bio")
-  createdAt    DateTime     @default(now()) @map("dibuat_pada")
-  accountStatus String      @default("active") @map("status_akun")
+  profilePicUrl      String?      @map("url_foto_profil")
+  profilePicPublicId String?      @map("profile_pic_public_id")
+  bio                String?      @map("bio")
+  createdAt          DateTime     @default(now()) @map("dibuat_pada")
+  accountStatus      String       @default("active") @map("status_akun")
   
   role         Role         @relation(fields: [roleId], references: [id])
   discussions  Discussion[]
@@ -120,9 +121,10 @@ model Portfolio {
   slug        String           @unique
   description String?          @map("deskripsi")
   projectUrl  String?          @map("url_proyek")
-  coverUrl    String?          @map("url_sampul")
-  releaseDate DateTime?        @map("tanggal_rilis")
-  createdAt   DateTime         @default(now()) @map("dibuat_pada")
+  coverUrl      String?          @map("url_sampul")
+  coverPublicId String?          @map("cover_public_id")
+  releaseDate   DateTime?        @map("tanggal_rilis")
+  createdAt     DateTime         @default(now()) @map("dibuat_pada")
 
   user        User             @relation(fields: [userId], references: [id])
   category    Category         @relation(fields: [categoryId], references: [id])
@@ -134,9 +136,10 @@ model Portfolio {
 model PortfolioImage {
   id          Int       @id @default(autoincrement()) @map("id_gambar")
   portfolioId Int       @map("id_portofolio")
-  imageUrl    String    @map("url_gambar")
-  description String?   @map("deskripsi")
-  createdAt   DateTime  @default(now()) @map("dibuat_pada")
+  imageUrl           String    @map("url_gambar")
+  cloudinaryPublicId String?   @map("cloudinary_public_id")
+  description        String?   @map("deskripsi")
+  createdAt          DateTime  @default(now()) @map("dibuat_pada")
 
   portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
 
@@ -149,8 +152,9 @@ model Gallery {
   imageUrl    String   @map("url_gambar")
   tag         String   @default("Umum") @map("tag")
   description String?  @map("deskripsi")
-  takenAt     DateTime? @map("diambil_pada")
-  createdAt   DateTime @default(now()) @map("dibuat_pada")
+  takenAt            DateTime? @map("diambil_pada")
+  cloudinaryPublicId String?   @map("cloudinary_public_id")
+  createdAt          DateTime  @default(now()) @map("dibuat_pada")
 
   @@map("galeri")
 }
@@ -160,10 +164,11 @@ model TeamMember {
   name        String   @map("nama")
   role        String   @map("peran")
   bio         String?  @map("bio")
-  photoUrl    String?  @map("url_foto")
-  order       Int      @default(0) @map("urutan")
-  isActive    Boolean  @default(true) @map("aktif")
-  createdAt   DateTime @default(now()) @map("dibuat_pada")
+  photoUrl      String?  @map("url_foto")
+  photoPublicId String?  @map("photo_public_id")
+  order         Int      @default(0) @map("urutan")
+  isActive      Boolean  @default(true) @map("aktif")
+  createdAt     DateTime @default(now()) @map("dibuat_pada")
 
   @@map("anggota_tim")
 }
@@ -184,4 +189,18 @@ model Application {
   createdAt    DateTime @default(now()) @map("dibuat_pada")
 
   @@map("pendaftaran")
+}
+
+model Video {
+  id           Int      @id @default(autoincrement()) @map("id_video")
+  title        String   @map("judul")
+  videoUrl     String   @map("url_video")
+  thumbnailUrl String?  @map("url_thumbnail")
+  tag          String   @default("Umum") @map("tag")
+  description       String?  @map("deskripsi")
+  videoPublicId     String?  @map("video_public_id")
+  thumbnailPublicId String?  @map("thumbnail_public_id")
+  createdAt         DateTime @default(now()) @map("dibuat_pada")
+
+  @@map("video")
 }

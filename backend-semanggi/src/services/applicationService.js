@@ -25,7 +25,7 @@ const applicationService = {
   },
 
   deleteApplication: async (id) => {
-    return prisma.application.delete({
+    return prisma.application.deleteMany({
       where: { id: parseInt(id, 10) }
     });
   }

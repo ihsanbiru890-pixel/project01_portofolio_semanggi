@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { HiOutlinePhoto } from 'react-icons/hi2';
 import api from '../lib/api';
+import ConfirmModal from '../components/ConfirmModal';
 
 const tags = ['Semua', 'Diskusi', 'Workshop', 'Project', 'Event'];
 
@@ -10,6 +11,10 @@ export default function Gallery() {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newPhoto, setNewPhoto] = useState({ title: '', tag: 'Diskusi', description: '', file: null });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -35,11 +40,41 @@ export default function Gallery() {
     fetchGallery();
   }, [activeTag]);
 
+  const handleAddPhoto = async (e) => {
+    e.preventDefault();
+    if (!newPhoto.file) return alert('Pilih foto terlebih dahulu');
+    
+    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append('image', newPhoto.file);
+    formData.append('title', newPhoto.title);
+    formData.append('tag', newPhoto.tag);
+    formData.append('description', newPhoto.description);
+
+    try {
+      const res = await api.post('/gallery', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (res.data.success) {
+        setIsAddModalOpen(false);
+        setNewPhoto({ title: '', tag: 'Diskusi', description: '', file: null });
+        fetchGallery();
+      }
+    } catch (err) {
+      alert('Gagal menambah foto');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleDeletePhoto = async (e, id) => {
     e.stopPropagation();
-    if (!window.confirm('Hapus foto ini?')) return;
+    setConfirmModal({ isOpen: true, id });
+  };
+
+  const confirmDelete = async () => {
     try {
-      await api.delete(`/gallery/${id}`);
+      await api.delete(`/gallery/${confirmModal.id}`);
       fetchGallery();
     } catch (err) {
       alert('Gagal menghapus foto');
@@ -49,10 +84,21 @@ export default function Gallery() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
       {/* Header */}
-      <div className="mb-10">
-        <p className="text-xs text-sg tracking-[0.3em] uppercase mb-2">Dokumentasi</p>
-        <h1 className="text-4xl font-bold tracking-widest mb-2">GALERI</h1>
-        <p className="text-gray-400 text-sm">Rekaman momen berharga dalam perjalanan Semanggi.</p>
+      <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <p className="text-xs text-sg tracking-[0.3em] uppercase mb-2">Dokumentasi</p>
+          <h1 className="text-4xl font-bold tracking-widest mb-2">GALERI</h1>
+          <p className="text-gray-400 text-sm">Rekaman momen berharga dalam perjalanan Semanggi.</p>
+        </div>
+        {isAdmin && (
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="btn-primary py-2.5 px-6 text-xs uppercase tracking-widest flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+            Tambah Foto
+          </button>
+        )}
       </div>
 
       {/* Filter Tags */}
@@ -151,6 +197,88 @@ export default function Gallery() {
           </div>
         </div>
       )}
+      {/* Add Photo Modal */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-darkbg-card border border-white/10 rounded-3xl w-full max-w-md p-8 shadow-2xl relative">
+            <button 
+              onClick={() => setIsAddModalOpen(false)}
+              className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
+            >✕</button>
+            
+            <h2 className="text-xl font-bold mb-6">Tambah Foto Galeri</h2>
+            
+            <form onSubmit={handleAddPhoto} className="space-y-4">
+              <div>
+                <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] block mb-2 font-bold">Pilih File</label>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={(e) => setNewPhoto({ ...newPhoto, file: e.target.files[0] })}
+                  className="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:uppercase file:tracking-widest file:bg-sg/10 file:text-sg hover:file:bg-sg/20 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] block mb-2 font-bold">Judul</label>
+                <input 
+                  type="text" 
+                  className="input"
+                  placeholder="Judul foto..."
+                  value={newPhoto.title}
+                  onChange={(e) => setNewPhoto({ ...newPhoto, title: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] block mb-2 font-bold">Kategori</label>
+                <select 
+                  className="input"
+                  value={newPhoto.tag}
+                  onChange={(e) => setNewPhoto({ ...newPhoto, tag: e.target.value })}
+                >
+                  {tags.filter(t => t !== 'Semua').map(t => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[10px] text-gray-500 uppercase tracking-[0.2em] block mb-2 font-bold">Deskripsi</label>
+                <textarea 
+                  className="input h-20 resize-none"
+                  placeholder="Deskripsi singkat..."
+                  value={newPhoto.description}
+                  onChange={(e) => setNewPhoto({ ...newPhoto, description: e.target.value })}
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={isSubmitting}
+                className="btn-primary w-full py-3 mt-4 disabled:opacity-50 flex justify-center items-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    Mengunggah...
+                  </>
+                ) : 'Simpan Foto'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Modal */}
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        title="Hapus Foto"
+        message="Hapus foto ini secara permanen dari galeri?"
+        onConfirm={confirmDelete}
+        onClose={() => setConfirmModal({ isOpen: false, id: null })}
+      />
     </div>
   );
 }

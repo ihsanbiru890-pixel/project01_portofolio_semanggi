@@ -13,5 +13,6 @@ router.use('/portfolios', require('./portfolioRoutes.js'));
 router.use('/gallery', require('./galleryRoutes.js'));
 router.use('/team', require('./teamRoutes.js'));
 router.use('/applications', require('./applicationRoutes.js'));
+router.use('/videos', require('./videoRoutes.js'));
 
 module.exports = router;

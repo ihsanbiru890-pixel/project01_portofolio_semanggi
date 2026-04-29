@@ -11,6 +11,8 @@ import ThreadDetail from './pages/ThreadDetail';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import Gallery from './pages/Gallery';
+import Videos from './pages/Videos';
+import Team from './pages/Team';
 import LoadingScreen from './components/LoadingScreen';
 
 function App() {
@@ -22,6 +24,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
+          <Route path="team" element={<Team />} />
           <Route path="projects" element={<Projects />} />
           <Route path="system" element={<System />} />
           <Route path="form-pendaftaran" element={<FormPendaftaran />} />
@@ -32,6 +35,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="admin" element={<Admin />} />
           <Route path="gallery" element={<Gallery />} />
+          <Route path="videos" element={<Videos />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { HiOutlineUser, HiOutlineHandThumbUp, HiOutlineChatBubbleLeft } from 'react-icons/hi2';
 import api from '../lib/api';
+import ConfirmModal from '../components/ConfirmModal';
 
 export default function ThreadDetail() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ export default function ThreadDetail() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
   const [editedContent, setEditedContent] = useState('');
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || 'null');
@@ -57,23 +59,35 @@ export default function ThreadDetail() {
   };
 
   const handleDeleteThread = async () => {
-    if (!window.confirm('Hapus diskusi ini?')) return;
-    try {
-      await api.delete(`/discussions/${id}`);
-      window.location.href = '/forum';
-    } catch (err) {
-      alert('Gagal menghapus diskusi');
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: 'Hapus Diskusi',
+      message: 'Apakah Anda yakin ingin menghapus diskusi ini? Tindakan ini tidak dapat dibatalkan.',
+      onConfirm: async () => {
+        try {
+          await api.delete(`/discussions/${id}`);
+          window.location.href = '/forum';
+        } catch (err) {
+          alert('Gagal menghapus diskusi');
+        }
+      }
+    });
   };
 
   const handleDeletePost = async (postId) => {
-    if (!window.confirm('Hapus balasan ini?')) return;
-    try {
-      await api.delete(`/posts/${postId}`);
-      fetchThread();
-    } catch (err) {
-      alert('Gagal menghapus balasan');
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: 'Hapus Balasan',
+      message: 'Hapus balasan ini secara permanen?',
+      onConfirm: async () => {
+        try {
+          await api.delete(`/posts/${postId}`);
+          fetchThread();
+        } catch (err) {
+          alert('Gagal menghapus balasan');
+        }
+      }
+    });
   };
 
   const handleUpdateThread = async () => {
@@ -266,6 +280,14 @@ export default function ThreadDetail() {
           </div>
         </div>
       )}
+      {/* Confirm Modal */}
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onConfirm={confirmModal.onConfirm}
+        onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+      />
     </div>
   );
 }

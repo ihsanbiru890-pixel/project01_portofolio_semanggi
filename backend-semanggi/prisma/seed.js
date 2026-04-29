@@ -32,6 +32,7 @@ async function main() {
     { id: 1, name: 'Web Dev', slug: 'web-dev', description: 'Web development discussions' },
     { id: 2, name: 'Design', slug: 'design', description: 'UI/UX and Graphic Design' },
     { id: 3, name: 'Game Dev', slug: 'game-dev', description: 'Game development' },
+    { id: 4, name: 'Lainnya', slug: 'lainnya', description: 'Diskusi topik lainnya' },
   ];
 
   for (const cat of categories) {
