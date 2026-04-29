@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Role {
+  id          Int        @id @default(autoincrement()) @map("id_peran")
+  name        String     @map("nama_peran")
+  description String?    @map("deskripsi")
+  createdAt   DateTime   @default(now()) @map("dibuat_pada")
+  users       User[]
+
+  @@map("peran")
+}
+
+model User {
+  id           Int          @id @default(autoincrement()) @map("id_pengguna")
+  roleId       Int          @map("id_peran")
+  username     String       @map("nama_pengguna")
+  email        String       @unique
+  password     String       @map("kata_sandi")
+  profilePicUrl String?     @map("url_foto_profil")
+  bio          String?      @map("bio")
+  createdAt    DateTime     @default(now()) @map("dibuat_pada")
+  accountStatus String      @default("active") @map("status_akun")
+  
+  role         Role         @relation(fields: [roleId], references: [id])
+  discussions  Discussion[]
+  posts        Post[]
+  comments     Comment[]
+  reactions    Reaction[]
+  portfolios   Portfolio[]
+
+  @@map("pengguna")
+}
+
+model Category {
+  id          Int          @id @default(autoincrement()) @map("id_kategori")
+  name        String       @map("nama_kategori")
+  slug        String       @unique @map("slug")
+  description String?      @map("deskripsi")
+  icon        String?      @map("ikon")
+  createdAt   DateTime     @default(now()) @map("dibuat_pada")
+  discussions Discussion[]
+  portfolios  Portfolio[]
+
+  @@map("kategori")
+}
+
+model Discussion {
+  id          Int        @id @default(autoincrement()) @map("id_diskusi")
+  userId      Int        @map("id_pengguna")
+  categoryId  Int        @map("id_kategori")
+  title       String     @map("judul_diskusi")
+  content     String     @map("konten")
+  status      String     @default("open")
+  createdAt   DateTime   @default(now()) @map("dibuat_pada")
+  updatedAt   DateTime   @updatedAt @map("diperbaharui_pada")
+
+  user        User       @relation(fields: [userId], references: [id])
+  category    Category   @relation(fields: [categoryId], references: [id])
+  posts       Post[]
+  comments    Comment[]
+
+  @@map("ruang_diskusi")
+}
+
+model Post {
+  id          Int        @id @default(autoincrement()) @map("id_postingan")
+  userId      Int        @map("id_pengguna")
+  discussionId Int       @map("id_diskusi")
+  parentId    Int?       @map("id_induk")
+  content     String     @map("konten")
+  createdAt   DateTime   @default(now()) @map("dibuat_pada")
+  updatedAt   DateTime   @updatedAt @map("diperbaharui_pada")
+
+  user        User       @relation(fields: [userId], references: [id])
+  discussion  Discussion @relation(fields: [discussionId], references: [id])
+  parent      Post?      @relation("PostToPost", fields: [parentId], references: [id])
+  replies     Post[]     @relation("PostToPost")
+  reactions   Reaction[]
+
+  @@map("postingan")
+}
+
+model Comment {
+  id          Int        @id @default(autoincrement()) @map("id_komentar")
+  discussionId Int       @map("id_diskusi")
+  userId      Int        @map("id_pengguna")
+  content     String     @map("isi_komentar")
+  parentId    Int?       @map("id_induk")
+  createdAt   DateTime   @default(now()) @map("dibuat_pada")
+
+  discussion  Discussion @relation(fields: [discussionId], references: [id])
+  user        User       @relation(fields: [userId], references: [id])
+
+  @@map("komentar")
+}
+
+model Reaction {
+  id          Int      @id @default(autoincrement()) @map("id_reaksi")
+  userId      Int      @map("id_pengguna")
+  postId      Int      @map("id_postingan")
+  type        String   @map("reaksi_tipe")
+
+  user        User     @relation(fields: [userId], references: [id])
+  post        Post     @relation(fields: [postId], references: [id])
+
+  @@map("reaksi")
+}
+
+model Portfolio {
+  id          Int              @id @default(autoincrement()) @map("id_portofolio")
+  userId      Int              @map("id_pengguna")
+  categoryId  Int              @map("id_kategori")
+  title       String           @map("judul")
+  slug        String           @unique
+  description String?          @map("deskripsi")
+  projectUrl  String?          @map("url_proyek")
+  coverUrl    String?          @map("url_sampul")
+  releaseDate DateTime?        @map("tanggal_rilis")
+  createdAt   DateTime         @default(now()) @map("dibuat_pada")
+
+  user        User             @relation(fields: [userId], references: [id])
+  category    Category         @relation(fields: [categoryId], references: [id])
+  images      PortfolioImage[]
+
+  @@map("portofolio")
+}
+
+model PortfolioImage {
+  id          Int       @id @default(autoincrement()) @map("id_gambar")
+  portfolioId Int       @map("id_portofolio")
+  imageUrl    String    @map("url_gambar")
+  description String?   @map("deskripsi")
+  createdAt   DateTime  @default(now()) @map("dibuat_pada")
+
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+
+  @@map("portofolio_gambar")
+}
+
+model Gallery {
+  id          Int      @id @default(autoincrement()) @map("id_galeri")
+  title       String   @map("judul")
+  imageUrl    String   @map("url_gambar")
+  tag         String   @default("Umum") @map("tag")
+  description String?  @map("deskripsi")
+  takenAt     DateTime? @map("diambil_pada")
+  createdAt   DateTime @default(now()) @map("dibuat_pada")
+
+  @@map("galeri")
+}
+
+model TeamMember {
+  id          Int      @id @default(autoincrement()) @map("id_anggota")
+  name        String   @map("nama")
+  role        String   @map("peran")
+  bio         String?  @map("bio")
+  photoUrl    String?  @map("url_foto")
+  order       Int      @default(0) @map("urutan")
+  isActive    Boolean  @default(true) @map("aktif")
+  createdAt   DateTime @default(now()) @map("dibuat_pada")
+
+  @@map("anggota_tim")
+}
+
+model Application {
+  id           Int      @id @default(autoincrement()) @map("id_pendaftaran")
+  nama         String   @map("nama")
+  email        String   @map("email")
+  tempatLahir  String?  @map("tempat_lahir")
+  tanggalLahir String?  @map("tanggal_lahir")
+  domisili     String?  @map("domisili")
+  hp           String?  @map("no_hp")
+  status       String   @default("PENDING") @map("status")
+  skill        String?  @map("skill")
+  tools        String?  @map("tools")
+  motivasi     String?  @map("motivasi")
+  isReviewed   Boolean  @default(false) @map("sudah_ditinjau")
+  createdAt    DateTime @default(now()) @map("dibuat_pada")
+
+  @@map("pendaftaran")
+}

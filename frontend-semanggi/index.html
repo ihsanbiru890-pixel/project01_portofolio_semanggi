@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/assets/logoresmi.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <title>Semanggi Forum</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id="splash-screen" style="position: fixed; inset: 0; background: #0a0d0f; display: flex; align-items: center; justify-content: center; z-index: 99999;">
+      <style>
+        @keyframes pulse-logo {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.95); }
+        }
+        #splash-logo {
+          animation: pulse-logo 1.5s ease-in-out infinite;
+          width: 80px;
+          height: 80px;
+        }
+      </style>
+      <img id="splash-logo" src="/assets/logoresmi.png" alt="Loading..." />
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      window.addEventListener('load', () => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          setTimeout(() => {
+            splash.style.opacity = '0';
+            splash.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => splash.remove(), 500);
+          }, 500);
+        }
+      });
+    </script>
+  </body>
+</html>
